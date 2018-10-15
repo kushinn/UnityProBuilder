@@ -1,0 +1,1 @@
+{"platform":"StandaloneWindows64","options":"ForceOptimizeScriptCompilation","buildNumberAdd":0,"buildPlayerOptions":{"locationPathName":""},"playerSettings":{"productName":"Quest","companyName":"iDreamsky","applicationIdentifier":"com.iDreamsky.Quest","bundleVersion":"1.0.0"}}

@@ -1,0 +1,1 @@
+{"platform":"iOS","options":"ForceOptimizeScriptCompilation","buildNumberAdd":0,"buildPlayerOptions":{"locationPathName":""},"playerSettings":{"productName":"Quest","companyName":"Test","applicationIdentifier":"com.Test.Quest","bundleVersion":"1.0.0"}}

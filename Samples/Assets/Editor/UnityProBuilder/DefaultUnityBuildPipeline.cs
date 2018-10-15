@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
-using UnityProBuilder;
 
 namespace UnityProBuilder
 {
@@ -33,9 +31,17 @@ namespace UnityProBuilder
             get { return buildNumberAdd; }
         }
 
-        //public InvokeMethod prepostMethod;
-        //public InvokeMethod buildMethod;
-        //public InvokeMethod postMethod;
+        public void FillWithProject(BuildTarget target)
+        {
+            platform = target.ToString();
+            options = BuildOptions.None.ToString();
+
+            TypeReader reader = new TypeReader(playerSettings);
+            reader.CopyFieldsFromProperties<UnityEditor.PlayerSettings>();
+            playerSettings = (PlayerSettings) reader.Value;
+
+
+        }
     }
 
     [Serializable]

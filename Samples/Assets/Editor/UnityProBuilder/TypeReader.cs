@@ -8,6 +8,8 @@ namespace UnityProBuilder
         private readonly Type type;
         private object obj;
 
+        public object Value { get { return obj; } }
+
         public string TypeName
         {
             get { return type.Name; }
@@ -51,6 +53,25 @@ namespace UnityProBuilder
                 return false;
             value = (T)info.GetValue(obj);
             return true;
+        }
+
+        public void CopyFieldsFromProperties<T>(BindingFlags flags = BindingFlags.Public | BindingFlags.Instance, object fromTarget = null)
+        {
+            var destType = typeof(T);
+            var fields = type.GetFields(flags);
+
+            for (int i = 0; i < fields.Length; i++)
+            {
+                var field = fields[i];
+
+                var fromProperty = destType.GetProperty(field.Name);
+                if (fromProperty == null)
+                    continue;
+                if (fromProperty.PropertyType == field.FieldType)
+                {
+                    field.SetValue(obj, fromProperty.GetValue(fromTarget, null));
+                }
+            }
         }
 
         public void CopyFieldsToProperties<T>(BindingFlags flags = BindingFlags.Public | BindingFlags.Instance, object dest = null)

@@ -47,19 +47,17 @@ namespace UnityProBuilder
             DefaultUnityBuildPipeline.Launch(sWindowsBuildConfig);
         }
 
-        [MenuItem("BuildTools/GenerateShell")]
-        public static void GenerateShell()
+        [MenuItem("BuildTools/Generate Shells")]
+        public static void GenerateShells()
         {
-#if UNITY_EDITOR_WIN
             GenerateWindowsBatch(GetDebugBatchPath(BuildTarget.Android, ".bat"), "UnityProBuilder.UnityProBuilder.ExportAndroid", "build_android.log", "-android -quit");
-#else
-            //GenerateMacShell(GetDebugBatchPath(BuildTarget.Android, ".sh"));
-            //GenerateMacShell(GetDebugBatchPath(BuildTarget.iOS, ".sh"));
-#endif
+            GenerateMacShell(GetDebugBatchPath(BuildTarget.Android, ".sh"), "UnityProBuilder.UnityProBuilder.ExportAndroid", "build_android.log", "-android -quit");
+            GenerateMacShell(GetDebugBatchPath(BuildTarget.iOS, ".sh"), "UnityProBuilder.UnityProBuilder.ExportiOS", "build_iOS.log", "-ios -quit");
         }
 
         private static void GenerateWindowsBatch(string path, string method, string logFileName, string otherParams = null)
         {
+#if UNITY_EDITOR_WIN
             string pathOfUnity = Process.GetCurrentProcess().MainModule.FileName;
 
             StringBuilder sb = new StringBuilder(1024);
@@ -77,16 +75,40 @@ namespace UnityProBuilder
                 .AppendLine(otherParams);
 
             File.WriteAllText(path, sb.ToString());
+#endif
         }
 
-        private static void GenerateMacShell()
+        private static void GenerateMacShell(string path, string method, string logFileName, string otherParams = null)
         {
+            string pathOfUnity = Process.GetCurrentProcess().MainModule.FileName;
 
+            StringBuilder sb = new StringBuilder(1024);
+            sb.AppendLine("###################################################################")
+                .AppendLine("#!/bin/bash")
+                .AppendLine("PROJECT_PATH='pwd'")
+                .Append("UNITY_PATH='").Append(pathOfUnity).AppendLine("'")
+                .Append(pathOfUnity).Append(" -batchmode -projectPath $PROJECT_PATH -executeMethod ")
+                .Append(method)
+                .Append(" -logFile $PROJECT_PATH")
+                .Append(logFileName)
+                .Append(" ")
+                .AppendLine(otherParams);
+
+            File.WriteAllText(path, sb.ToString());
         }
 
-        [MenuItem("BuildTools/Text")]
-        public static void Export()
+        [MenuItem("BuildTools/Generate All Configs")]
+        public static void GenerateConfigs()
         {
+            DefaultUnityBuildConfig empty = new DefaultUnityBuildConfig();
+            empty.FillWithProject(BuildTarget.Android);
+            File.WriteAllText(sAndroidBuildConfig, JsonUtility.ToJson(empty));
+
+            empty.FillWithProject(BuildTarget.iOS);
+            File.WriteAllText(siOSBuildConfig, JsonUtility.ToJson(empty));
+
+            GenerateShells();
+            AssetDatabase.Refresh();
         }
     }
 }
