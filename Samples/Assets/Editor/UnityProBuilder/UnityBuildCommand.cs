@@ -50,6 +50,22 @@ namespace UnityProBuilder
         }
     }
 
+    public sealed class UnityExportGradleProjectCommand : IUnityBuildCommand
+    {
+        public Result Build(IUnityBuildConfig config)
+        {
+            var reader = new TypeReader(config);
+
+            var options = reader.WriteToObjectProperties<UnityEditor.BuildPlayerOptions>(dest: new UnityEditor.BuildPlayerOptions());
+            options.target = config.Platform;
+            options.options = config.Options;
+            
+
+            var report = BuildPipeline.BuildPlayer(options);
+            return Result.Success;
+        }
+    }
+
     public sealed class PlayerSettingCommand : IUnityBuildCommand
     {
         public Result Build(IUnityBuildConfig config)

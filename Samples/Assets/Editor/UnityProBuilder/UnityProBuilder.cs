@@ -35,6 +35,12 @@ namespace UnityProBuilder
             DefaultUnityBuildPipeline.Launch(sAndroidBuildConfig);
         }
 
+        [MenuItem("BuildTools/ExportGradleProject")]
+        public static void ExportAndroidGradleProject()
+        {
+            DefaultUnityBuildPipeline.Launch(sAndroidBuildConfig);
+        }
+
         [MenuItem("BuildTools/ExportiOS")]
         public static void ExportiOS()
         {

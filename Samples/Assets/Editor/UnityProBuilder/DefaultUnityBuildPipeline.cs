@@ -106,7 +106,6 @@ namespace UnityProBuilder
         public override Result BeforeBuild(IUnityBuildConfig config)
         {
             AppendPrepostCommands(new PlayerSettingCommand());
-            AppendBuildCommands(new UnityBuildPlayerCommand());
             return Result.Success;
         }
 
@@ -114,6 +113,17 @@ namespace UnityProBuilder
         {
             var pipeline = new DefaultUnityBuildPipeline();
             pipeline.BeforeBuild(config);
+            pipeline.AppendBuildCommands(new UnityBuildPlayerCommand());
+
+            pipeline.Build(config);
+        }
+
+        public static void ExportGradleProject(DefaultUnityBuildConfig config)
+        {
+            var pipeline = new DefaultUnityBuildPipeline();
+            pipeline.BeforeBuild(config);
+            pipeline.AppendBuildCommands(new UnityBuildPlayerCommand());
+
             pipeline.Build(config);
         }
 
@@ -122,6 +132,20 @@ namespace UnityProBuilder
             if (File.Exists(path))
             {
                 DefaultUnityBuildPipeline.Launch(JsonUtility.FromJson<DefaultUnityBuildConfig>(File.ReadAllText(path)));
+            }
+            else
+            {
+                DefaultUnityBuildConfig empty = new DefaultUnityBuildConfig();
+                File.WriteAllText(path, JsonUtility.ToJson(empty));
+            }
+            AssetDatabase.Refresh();
+        }
+
+        public static void ExportGradleProject(string path)
+        {
+            if (File.Exists(path))
+            {
+                DefaultUnityBuildPipeline.ExportGradleProject(JsonUtility.FromJson<DefaultUnityBuildConfig>(File.ReadAllText(path)));
             }
             else
             {
