@@ -1,0 +1,14 @@
+{
+	"platform": "Android",
+	"options": "None",
+	"buildNumberAdd": 0,
+	"buildPlayerOptions": {
+		"locationPathName": "F:/Output/Quest/GameTest.apk"
+	},
+	"playerSettings": {
+		"productName": "Quest",
+		"companyName": "iDreamsky",
+		"applicationIdentifier": "com.iDreamsky.Quest",
+		"bundleVersion": "1.0.0"
+	}
+}
