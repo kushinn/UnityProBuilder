@@ -86,21 +86,35 @@ namespace UnityProBuilder
 
         private static void GenerateMacShell(string path, string method, string logFileName, string otherParams = null)
         {
+#if UNITY_EDITOR_OSX
             string pathOfUnity = Process.GetCurrentProcess().MainModule.FileName;
+            if (!pathOfUnity.StartsWith("/", StringComparison.CurrentCulture))
+            {
+                pathOfUnity = Path.Combine("/Applications/Unity/Unity.app/Contents/MacOS", pathOfUnity);
+            }
 
             StringBuilder sb = new StringBuilder(1024);
             sb.AppendLine("###################################################################")
                 .AppendLine("#!/bin/bash")
-                .AppendLine("PROJECT_PATH='pwd'")
+                .AppendLine("PROJECT_PATH=''")
                 .Append("UNITY_PATH='").Append(pathOfUnity).AppendLine("'")
-                .Append(pathOfUnity).Append(" -batchmode -projectPath $PROJECT_PATH -executeMethod ")
+                .Append("$UNITY_PATH -batchmode -projectPath $PROJECT_PATH -executeMethod ")
                 .Append(method)
-                .Append(" -logFile $PROJECT_PATH")
+                .Append(" -logFile $PROJECT_PATH ")
                 .Append(logFileName)
                 .Append(" ")
                 .AppendLine(otherParams);
 
             File.WriteAllText(path, sb.ToString());
+            var chmodProcess = new Process();
+            var chmodStartInfo = new ProcessStartInfo();
+            chmodStartInfo.WindowStyle = ProcessWindowStyle.Normal;
+            chmodStartInfo.FileName = "/bin/chmod";
+            chmodStartInfo.Arguments = string.Concat("+x \"", path, "\"");
+            chmodProcess.StartInfo = chmodStartInfo;
+            chmodProcess.Start();
+            chmodProcess.WaitForExit();
+#endif
         }
 
         [MenuItem("BuildTools/Generate All Configs")]
